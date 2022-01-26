@@ -4,3 +4,6 @@ serve:
 git-hook:
 	rm -f .git/hooks/pre-commit
 	ln -s `pwd`/tools/git-hooks/pre-commit .git/hooks/pre-commit
+
+prepare:
+	mkdir -p uploads

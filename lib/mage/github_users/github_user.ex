@@ -8,7 +8,7 @@ defmodule Mage.GithubUsers.GithubUser do
     field :bio_html, :string
     field :company, :string
     field :company_html, :string
-    field :database_id_in_github, :string
+    field :database_id_in_github, :integer
     field :email, :string
     field :id_in_github, :string
     field :last_synced_at, :utc_datetime
@@ -18,6 +18,8 @@ defmodule Mage.GithubUsers.GithubUser do
     field :url, :string
     field :website_url, :string
     field :user_id, :id
+    field :link_id, :id
+    field :avatar, :map
 
     timestamps()
   end
@@ -39,23 +41,12 @@ defmodule Mage.GithubUsers.GithubUser do
       :avatar_url,
       :bio,
       :bio_html,
-      :last_synced_at
+      :last_synced_at,
+      :link_id,
+      :avatar
     ])
     |> validate_required([
-      :id_in_github,
-      :name,
-      :login,
-      :email,
-      :location,
-      :website_url,
-      :url,
-      :company,
-      :company_html,
-      :database_id_in_github,
-      :avatar_url,
-      :bio,
-      :bio_html,
-      :last_synced_at
+      :id_in_github
     ])
   end
 end

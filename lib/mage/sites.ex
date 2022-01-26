@@ -7,6 +7,7 @@ defmodule Mage.Sites do
   alias Mage.Repo
 
   alias Mage.Sites.Site
+  alias Mage.Sites.SyncSite
 
   @doc """
   Returns the list of sites.
@@ -100,5 +101,18 @@ defmodule Mage.Sites do
   """
   def change_site(%Site{} = site, attrs \\ %{}) do
     Site.changeset(site, attrs)
+  end
+
+  def update_or_create_site(queryable, changeset) do
+    case Repo.get_by(Site, queryable) do
+      nil -> %Site{}
+      model -> model
+    end
+    |> Site.changeset(Map.merge(queryable, changeset))
+    |> Repo.insert_or_update()
+  end
+
+  def sync_site(link_url, link_body_html) do
+    SyncSite.sync_site(link_url, link_body_html)
   end
 end

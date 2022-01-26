@@ -19,7 +19,7 @@ defmodule Mage.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Mage.Application, []},
+      mod: {Mage.Application, [:httpoison]},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -40,7 +40,7 @@ defmodule Mage.MixProject do
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.17.5"},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.6.2"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
@@ -51,7 +51,9 @@ defmodule Mage.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:pow, "~> 1.0.26"},
       {:pow_assent, "~> 0.4.12"},
-      {:neuron, "~> 5.0.0"}
+      {:neuron, "~> 5.0.0"},
+      {:httpoison, "~> 1.8"},
+      {:ex_image_info, "~> 0.2.4"}
     ]
   end
 

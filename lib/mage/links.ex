@@ -6,7 +6,7 @@ defmodule Mage.Links do
   import Ecto.Query, warn: false
   alias Mage.Repo
 
-  alias Mage.Links.Link
+  alias Mage.Links.{Link, SyncLink}
 
   @doc """
   Returns the list of links.
@@ -100,5 +100,18 @@ defmodule Mage.Links do
   """
   def change_link(%Link{} = link, attrs \\ %{}) do
     Link.changeset(link, attrs)
+  end
+
+  def update_or_create_link(queryable, changeset) do
+    case Repo.get_by(Link, queryable) do
+      nil -> %Link{}
+      model -> model
+    end
+    |> Link.changeset(Map.merge(queryable, changeset))
+    |> Repo.insert_or_update()
+  end
+
+  def sync_link(link_url) do
+    SyncLink.sync_link(link_url)
   end
 end

@@ -4,6 +4,7 @@ defmodule Mage.Accounts.User do
 
   schema "users" do
     field :email, :string
+    has_one :user_identity, Mage.UserIdentities.UserIdentity
 
     timestamps()
   end

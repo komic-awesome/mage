@@ -1,8 +1,43 @@
 defmodule Mage.Sites.SyncSite do
+  alias Mage.Repo
   alias Mage.Sites
+  alias Mage.Sites.Site
   alias Mage.ContextHelpers
 
   def sync_site(link_url, link_body_html) do
+    case URI.parse(link_url) do
+      %{host: host, scheme: scheme} ->
+        site = Repo.get_by(Site, %{host: host})
+
+        case should_sync?(site) do
+          true ->
+            sync_site(:from_remote, link_url, link_body_html)
+
+          false ->
+            {:ok, site}
+        end
+
+      _ ->
+        {:ok, nil}
+    end
+  end
+
+  @seconds_per_week 3600 * 24 * 7
+
+  defp should_sync?(nil), do: true
+  defp should_sync?(%Site{last_synced_at: nil}), do: true
+
+  defp should_sync?(site) do
+    now = DateTime.utc_now()
+
+    if DateTime.diff(now, site.last_synced_at) < @seconds_per_week do
+      false
+    else
+      true
+    end
+  end
+
+  defp sync_site(:from_remote, link_url, link_body_html) do
     case URI.parse(link_url) do
       %{host: host, scheme: scheme} ->
         site_url = URI.to_string(%URI{host: host, scheme: scheme})
@@ -20,6 +55,7 @@ defmodule Mage.Sites.SyncSite do
               }
           end
 
+        updated_site_attrs = Map.put_new(updated_site_attrs, :last_synced_at, DateTime.utc_now())
         Sites.update_or_create_site(%{host: host}, updated_site_attrs)
 
       _ ->

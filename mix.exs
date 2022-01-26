@@ -50,7 +50,8 @@ defmodule Mage.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:pow, "~> 1.0.26"},
-      {:pow_assent, "~> 0.4.12"}
+      {:pow_assent, "~> 0.4.12"},
+      {:neuron, "~> 5.0.0"}
     ]
   end
 

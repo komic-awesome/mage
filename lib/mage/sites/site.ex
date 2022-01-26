@@ -15,6 +15,6 @@ defmodule Mage.Sites.Site do
   def changeset(site, attrs) do
     site
     |> cast(attrs, [:host, :icon, :domain_coloring, :last_synced_at])
-    |> validate_required([:host, :icon])
+    |> validate_required([:host])
   end
 end

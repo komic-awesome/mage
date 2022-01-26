@@ -29,13 +29,7 @@ defmodule Mage.RssFeeds.RssFeed do
       :first_entity_published_at
     ])
     |> validate_required([
-      :title,
-      :feed_url,
-      :last_synced_at,
-      :last_error,
-      :first_entity_title,
-      :first_entity_summary,
-      :first_entity_published_at
+      :feed_url
     ])
   end
 end

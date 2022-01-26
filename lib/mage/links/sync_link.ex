@@ -3,6 +3,8 @@ defmodule Mage.Links.SyncLink do
   alias Mage.Links
   alias Mage.Links.Link
   alias Mage.Sites
+  alias Mage.RssFeeds
+  alias Mage.RssFeeds.RssFeed
   alias Mage.Sites.Site
 
   def sync_link(link_url) do
@@ -48,6 +50,15 @@ defmodule Mage.Links.SyncLink do
         case Sites.sync_site(link_url, body_html) do
           {:ok, %Site{} = site} ->
             Map.put_new(updated_attrs, :site_id, site.id)
+
+          _ ->
+            updated_attrs
+        end
+
+      updated_attrs =
+        case RssFeeds.sync_rss_feed(link_url, body_html) do
+          {:ok, %Site{} = rss_feed} ->
+            Map.put_new(updated_attrs, :rss_feed_id, rss_feed.id)
 
           _ ->
             updated_attrs

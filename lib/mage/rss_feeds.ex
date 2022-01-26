@@ -7,6 +7,7 @@ defmodule Mage.RssFeeds do
   alias Mage.Repo
 
   alias Mage.RssFeeds.RssFeed
+  alias Mage.RssFeeds.SyncRssFeed
 
   @doc """
   Returns the list of rss_feeds.
@@ -100,5 +101,18 @@ defmodule Mage.RssFeeds do
   """
   def change_rss_feed(%RssFeed{} = rss_feed, attrs \\ %{}) do
     RssFeed.changeset(rss_feed, attrs)
+  end
+
+  def update_or_create_rss_feed(queryable, changeset) do
+    case Repo.get_by(RssFeed, queryable) do
+      nil -> %RssFeed{}
+      model -> model
+    end
+    |> RssFeed.changeset(Map.merge(queryable, changeset))
+    |> Repo.insert_or_update()
+  end
+
+  def sync_rss_feed(link_url, link_body_html) do
+    SyncRssFeed.sync_rss_feed(link_url, link_body_html)
   end
 end

@@ -1,9 +1,44 @@
 defmodule Mage.Links.SyncLink do
+  alias Mage.Repo
   alias Mage.Links
+  alias Mage.Links.Link
   alias Mage.Sites
   alias Mage.Sites.Site
 
   def sync_link(link_url) do
+    link = Repo.get_by(Link, %{url: link_url})
+
+    case should_sync?(link) do
+      true ->
+        sync_link(:from_remote, link_url)
+
+      false ->
+        {:ok, link}
+    end
+  end
+
+  @seconds_per_week 3600 * 24 * 7
+  @seconds_per_hour 3600
+
+  defp should_sync?(nil), do: true
+  defp should_sync?(%Link{last_synced_at: nil}), do: true
+
+  defp should_sync?(link) do
+    now = DateTime.utc_now()
+
+    cond do
+      link.status_code == 200 && DateTime.diff(now, link.last_synced_at) > @seconds_per_week ->
+        true
+
+      link.status_code != 200 && DateTime.diff(now, link.last_synced_at) > @seconds_per_hour ->
+        true
+
+      true ->
+        false
+    end
+  end
+
+  defp sync_link(:from_remote, link_url) do
     with {:ok, %HTTPoison.Response{body: body_html, status_code: status_code}} <-
            HTTPoison.get(link_url, [], follow_redirect: true, timeout: 1000, recv_timeout: 2000) do
       updated_attrs = process_updated_attrs(link_url, status_code, body_html)

@@ -5,10 +5,25 @@
 </span>
 
 <%= unless is_nil(@sync_job) do %>
-<dl>
+<dl style="margin-top:60px;">
   <dt>开始时间</dt>
   <dd>
     <%= @sync_job.id %>
+  </dd>
+
+  <dt>状态</dt>
+  <dd>
+    <%= @sync_job.status_type %>
+  </dd>
+
+  <dt>开始时间</dt>
+  <dd>
+    <%= @sync_job.job_started_at %>
+  </dd>
+
+  <dt>结束时间</dt>
+  <dd>
+    <%= @sync_job.job_finished_at %>
   </dd>
 </dl>
 <% end %>

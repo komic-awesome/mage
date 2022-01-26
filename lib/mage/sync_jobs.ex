@@ -22,7 +22,12 @@ defmodule Mage.SyncJobs do
   end
 
   def get_user_sync_job(user_id) do
-    Repo.one(from s0 in Mage.SyncJobs.SyncJob, where: s0.user_id == ^user_id, limit: 1)
+    Repo.one(
+      from s0 in Mage.SyncJobs.SyncJob,
+        where: s0.user_id == ^user_id,
+        limit: 1,
+        order_by: [desc: :id]
+    )
   end
 
   def get_sync_job(job_id) do
@@ -102,6 +107,7 @@ defmodule Mage.SyncJobs do
              user_id: user_id
            }) do
       Mage.SyncJobs.Monitor.add_sync_job(job.id)
+      job
     end
   end
 end

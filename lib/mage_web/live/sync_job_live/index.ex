@@ -4,11 +4,22 @@ defmodule MageWeb.SyncJobLive.Index do
   alias MageWeb.LiveHelpers
   alias Mage.SyncJobs
 
+  import MageWeb.Endpoint, only: [unsubscribe: 1, subscribe: 1]
+
   @impl true
   def mount(_params, session, socket) do
     socket = socket |> assign_defaults(session)
+    current_user = socket.assigns.current_user
 
-    {:ok, socket |> assign(:sync_job, get_sync_job(socket.assigns.current_user))}
+    case current_user do
+      %{id: user_id} ->
+        subscribe("user:#{user_id}")
+
+      _ ->
+        nil
+    end
+
+    {:ok, socket |> assign(:sync_job, get_sync_job(current_user))}
   end
 
   @impl true
@@ -24,13 +35,16 @@ defmodule MageWeb.SyncJobLive.Index do
   def handle_event("begin_sync_job", _params, socket) do
     case socket.assigns.current_user do
       %{id: user_id} ->
-        SyncJobs.begin_user_sync_job(user_id)
+        job = SyncJobs.begin_user_sync_job(user_id)
+        {:noreply, socket |> assign(:sync_job, job)}
 
       _ ->
-        nil
+        {:noreply, socket}
     end
+  end
 
-    {:noreply, socket}
+  def handle_info(%{event: "job:updated", payload: job}, socket) do
+    {:noreply, socket |> assign(:sync_job, job)}
   end
 
   def get_sync_job(%{id: user_id}) do

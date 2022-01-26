@@ -15,9 +15,18 @@ defmodule Mage.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Mage.PubSub},
       # Start the Endpoint (http/https)
-      MageWeb.Endpoint
       # Start a worker by calling: Mage.Worker.start_link(arg)
       # {Mage.Worker, arg}
+      #
+      {
+        Task.Supervisor,
+        name: :sync_job_sup
+      },
+      {
+        Mage.SyncJobs.Monitor,
+        name: Mage.SyncJobs.Monitor
+      },
+      MageWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

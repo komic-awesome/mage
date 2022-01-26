@@ -1,5 +1,7 @@
 defmodule MageWeb.Router do
   use MageWeb, :router
+  use Pow.Phoenix.Router
+  use PowAssent.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -10,6 +12,13 @@ defmodule MageWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :skip_csrf_protection do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :put_secure_browser_headers
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -17,7 +26,27 @@ defmodule MageWeb.Router do
   scope "/", MageWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", SyncJobLive.Index, :index
+    live "/login", UserLive.Login, :login
+    live "/users", UserLive.Index, :index
+    live "/users/new", UserLive.Index, :new
+    live "/users/:id/edit", UserLive.Index, :edit
+
+    live "/users/:id", UserLive.Show, :show
+    live "/users/:id/show/edit", UserLive.Show, :edit
+  end
+
+  scope "/" do
+    pipe_through :browser
+
+    pow_routes()
+    pow_assent_routes()
+  end
+
+  scope "/" do
+    pipe_through :skip_csrf_protection
+
+    pow_assent_authorization_post_callback_routes()
   end
 
   # Other scopes may use custom stacks.

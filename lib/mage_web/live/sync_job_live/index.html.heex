@@ -1,0 +1,14 @@
+<h1>Listing Users</h1>
+
+<span>
+  <%= link "开始获取", to: "#", phx_click: "begin_sync_job" %>
+</span>
+
+<%= unless is_nil(@sync_job) do %>
+<dl>
+  <dt>开始时间</dt>
+  <dd>
+    <%= @sync_job.id %>
+  </dd>
+</dl>
+<% end %>

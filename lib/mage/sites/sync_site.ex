@@ -40,10 +40,8 @@ defmodule Mage.Sites.SyncSite do
   defp sync_site(:from_remote, link_url, link_body_html) do
     case URI.parse(link_url) do
       %{host: host, scheme: scheme} ->
-        site_url = URI.to_string(%URI{host: host, scheme: scheme})
-
         updated_site_attrs =
-          case get_favicon(site_url, link_body_html) do
+          case get_favicon(%{host: host, scheme: scheme}, link_body_html) do
             {:ok, current_icon} ->
               %{
                 icon: current_icon
@@ -63,11 +61,13 @@ defmodule Mage.Sites.SyncSite do
     end
   end
 
-  defp get_favicon(site_url, body_html) do
-    get_favicon_from_html(site_url, body_html)
+  defp get_favicon(%{host: host, scheme: scheme}, body_html) do
+    get_favicon_from_html(%{host: host, scheme: scheme}, body_html)
   end
 
-  defp get_favicon_from_html(site_url, body_html) do
+  defp get_favicon_from_html(%{host: host, scheme: scheme}, body_html) do
+    site_url = URI.to_string(%URI{host: host, scheme: scheme})
+
     with {:ok, document} <- Floki.parse_document(body_html),
          icons <- parse_icons(site_url, document) do
       case icons do
@@ -86,7 +86,16 @@ defmodule Mage.Sites.SyncSite do
           end
 
         _ ->
-          {:not_found}
+          download_site_url =
+            case host do
+              "weibo.com" -> URI.to_string(%URI{host: host, scheme: "https"})
+              _ -> URI.to_string(%URI{host: host, scheme: scheme})
+            end
+
+          case download_icon(download_site_url <> "/favicon.ico") do
+            {:ok, current_icon} -> {:ok, current_icon}
+            _ -> {:not_found}
+          end
       end
     else
       _any -> {:not_found}
@@ -134,9 +143,20 @@ defmodule Mage.Sites.SyncSite do
     |> Enum.filter(fn node ->
       Floki.attribute(node, "rel")
       |> case do
+        ["alternate icon"] -> true
+        ["shortcut icon"] -> true
+        ["shortcur icon"] -> true
+        ["shorticon icon"] -> true
         ["icon"] -> true
         ["apple-touch-icon"] -> true
         _ -> false
+      end
+    end)
+    |> Enum.filter(fn node ->
+      Floki.attribute(node, "href")
+      |> case do
+        ["data:" <> _tail] -> false
+        _ -> true
       end
     end)
   end

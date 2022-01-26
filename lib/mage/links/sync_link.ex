@@ -38,8 +38,8 @@ defmodule Mage.Links.SyncLink do
     end
   end
 
-  defp sync_link(:from_remote, link_url) do
-    with {:ok, %HTTPoison.Response{body: body_html, status_code: status_code}} <-
+  def sync_link(:from_remote, link_url) do
+    with {:ok, %HTTPoison.Response{body: body_html, status_code: status_code} = resp} <-
            HTTPoison.get(link_url, [], follow_redirect: true, timeout: 1000, recv_timeout: 2000) do
       updated_attrs = process_updated_attrs(link_url, status_code, body_html)
       updated_attrs = Map.put_new(updated_attrs, :last_synced_at, DateTime.utc_now())

@@ -3,7 +3,7 @@ defmodule Mage.ContextHelpers do
     with workspace_path <- Path.join(Path.expand("./uploads"), prefix),
          :ok <- File.mkdir_p(workspace_path),
          {:ok, %HTTPoison.Response{body: body}} <-
-           HTTPoison.get(url, [], timeout: 60_000, recv_timeout: 60_000),
+           HTTPoison.get(url, [], timeout: 60_000, recv_timeout: 60_000, follow_redirect: true),
          {mime_type, width, height, _} <- ExImageInfo.info(body),
          [format | _tail] <- MIME.extensions(mime_type),
          key <- "#{upload_filename(url, format)}",

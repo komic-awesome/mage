@@ -20,7 +20,7 @@ defmodule Mage.MixProject do
   def application do
     [
       mod: {Mage.Application, [:httpoison]},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :elixir_feed_parser]
     ]
   end
 
@@ -53,7 +53,8 @@ defmodule Mage.MixProject do
       {:pow_assent, "~> 0.4.12"},
       {:neuron, "~> 5.0.0"},
       {:httpoison, "~> 1.8"},
-      {:ex_image_info, "~> 0.2.4"}
+      {:ex_image_info, "~> 0.2.4"},
+      {:elixir_feed_parser, "~> 2.1.0"}
     ]
   end
 

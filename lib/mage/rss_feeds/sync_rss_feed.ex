@@ -84,15 +84,16 @@ defmodule Mage.RssFeeds.SyncRssFeed do
     end
   end
 
-  defp retrieve_first_entity(:title, %{entries: [%{title: title}]}) when is_binary(title) do
+  defp retrieve_first_entity(:title, %{entries: [%{title: title} | _tail]})
+       when is_binary(title) do
     title
   end
 
-  defp retrieve_first_entity(:url, %{entries: [%{url: url}]}) when is_binary(url) do
+  defp retrieve_first_entity(:url, %{entries: [%{url: url} | _tail]}) when is_binary(url) do
     url
   end
 
-  defp retrieve_first_entity(:summary, %{entries: [%{description: description}]})
+  defp retrieve_first_entity(:summary, %{entries: [%{description: description} | _tail]})
        when is_binary(description) do
     description
   end

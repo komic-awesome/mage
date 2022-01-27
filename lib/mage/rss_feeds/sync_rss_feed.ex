@@ -14,13 +14,12 @@ defmodule Mage.RssFeeds.SyncRssFeed do
                 first_entity_title: retrieve_first_entity(:title, feed),
                 first_entity_url: retrieve_first_entity(:url, feed),
                 first_entity_published_at: retrieve_first_entity(:published_at, feed),
-                first_entity_summary: retrieve_first_entity(:summary, feed)
+                first_entity_summary: retrieve_first_entity(:summary, feed),
+                last_error: nil,
+                last_synced_at: DateTime.utc_now()
               }
 
-              updated_site_attrs =
-                Map.put_new(updated_site_attrs, :last_synced_at, DateTime.utc_now())
-
-              RssFeeds.update_or_create_rss_feed(%{feed_url: feed_url}, updated_site_attrs)
+              {:ok, updated_site_attrs}
 
             _ ->
               {:error, %{message: "XML 解析失败"}}
@@ -34,6 +33,18 @@ defmodule Mage.RssFeeds.SyncRssFeed do
 
       _ ->
         {:error, %{message: "链接请求失败"}}
+    end
+    |> case do
+      {:ok, updated_site_attrs} ->
+        RssFeeds.update_or_create_rss_feed(%{feed_url: feed_url}, updated_site_attrs)
+
+      {:error, error} ->
+        RssFeeds.update_or_create_rss_feed(%{feed_url: feed_url}, %{
+          last_error: :erlang.term_to_binary(error),
+          last_synced_at: DateTime.utc_now()
+        })
+
+        {:ok, nil}
     end
   end
 
@@ -111,7 +122,25 @@ defmodule Mage.RssFeeds.SyncRssFeed do
     |> filter_feeds()
     |> List.wrap()
     |> aggregate_feed_urls(link_url)
+    |> Enum.map(&build_feed_url(&1, link_url))
+    |> Enum.filter(&(!is_nil(&1)))
   end
+
+  defp build_feed_url(nil, _link_url), do: nil
+
+  defp build_feed_url("/" <> relative_url, link_url) do
+    case URI.parse(link_url) do
+      %URI{host: host, scheme: scheme} ->
+        site_url = URI.to_string(%URI{host: host, scheme: scheme})
+
+        site_url <> "/" <> relative_url
+
+      _ ->
+        nil
+    end
+  end
+
+  defp build_feed_url(url, _link_url), do: url
 
   defp aggregate_feed_urls(nodes, _link_url) when is_list(nodes) do
     nodes

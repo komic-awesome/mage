@@ -54,7 +54,8 @@ defmodule Mage.MixProject do
       {:neuron, "~> 5.0.0"},
       {:httpoison, "~> 1.8"},
       {:ex_image_info, "~> 0.2.4"},
-      {:elixir_feed_parser, "~> 2.1.0"}
+      {:elixir_feed_parser, "~> 2.1.0"},
+      {:poolboy, "~> 1.5.1"}
     ]
   end
 

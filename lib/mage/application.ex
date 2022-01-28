@@ -5,6 +5,15 @@ defmodule Mage.Application do
 
   use Application
 
+  defp poolboy_config do
+    [
+      name: {:local, :github_user_worker},
+      worker_module: Mage.GithubUserWorker,
+      size: 6,
+      max_overflow: 2
+    ]
+  end
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -18,6 +27,11 @@ defmodule Mage.Application do
       # Start a worker by calling: Mage.Worker.start_link(arg)
       # {Mage.Worker, arg}
       #
+      :poolboy.child_spec(:github_user_worker, poolboy_config()),
+      {
+        Task.Supervisor,
+        name: :github_user_task_sup
+      },
       {
         Task.Supervisor,
         name: :sync_job_sup

@@ -104,6 +104,7 @@ defmodule Mage.SyncJobs do
            create_sync_job(%{
              job_started_at: DateTime.utc_now(),
              status_type: "waiting",
+             last_error: nil,
              user_id: user_id
            }) do
       Mage.SyncJobs.Monitor.add_sync_job(job.id)

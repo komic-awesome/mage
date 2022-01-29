@@ -3,6 +3,7 @@ defmodule MageWeb.SyncJobLive.Index do
 
   alias MageWeb.LiveHelpers
   alias Mage.SyncJobs
+  alias Mage.Accounts
 
   import MageWeb.Endpoint, only: [unsubscribe: 1, subscribe: 1]
 
@@ -19,7 +20,8 @@ defmodule MageWeb.SyncJobLive.Index do
         nil
     end
 
-    {:ok, socket |> assign(:sync_job, get_sync_job(current_user))}
+    {:ok,
+     socket |> assign(:sync_job, get_sync_job(current_user)) |> assign_github_users(current_user)}
   end
 
   @impl true
@@ -53,5 +55,11 @@ defmodule MageWeb.SyncJobLive.Index do
 
   def get_sync_job(_) do
     nil
+  end
+
+  defp assign_github_users(socket, nil), do: socket
+
+  defp assign_github_users(socket, %{id: user_id}) do
+    socket |> assign(:github_users, Accounts.list_followers(user_id))
   end
 end

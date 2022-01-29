@@ -7,6 +7,7 @@ defmodule Mage.RssFeeds.RssFeed do
     field :first_entity_published_at, :utc_datetime
     field :first_entity_summary, :string
     field :first_entity_title, :string
+    field :first_entity_url, :string
     field :last_error, :binary
     field :last_synced_at, :utc_datetime
     field :title, :string

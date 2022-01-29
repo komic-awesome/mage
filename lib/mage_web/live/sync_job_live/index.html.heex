@@ -1,29 +1,110 @@
-<h1>Listing Users</h1>
-
 <div>
   <%= link "开始获取", to: "#", phx_click: "begin_sync_job", class: "mt-1 inline-block bg-indigo-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
 </div>
 
 <%= unless is_nil(@sync_job) do %>
-<dl style="margin-top:60px;">
-  <dt>开始时间</dt>
-  <dd>
-    <%= @sync_job.id %>
-  </dd>
-
-  <dt>状态</dt>
-  <dd>
-    <%= @sync_job.status_type %>
-  </dd>
-
-  <dt>开始时间</dt>
-  <dd>
-    <%= @sync_job.job_started_at %>
-  </dd>
-
-  <dt>结束时间</dt>
-  <dd>
-    <%= @sync_job.job_finished_at %>
-  </dd>
-</dl>
+  <div class="flex flex-col mt-6">
+    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">任务状态</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开始时间</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">执行结束时间</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr >
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= @sync_job.status_type %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= @sync_job.job_started_at %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= @sync_job.job_finished_at %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
+
+<%= for item <- @github_users do %>
+<div class="mt-10 flex flex-wrap max-w-full gap-3 flex-col items-stretch justify-center">
+  <div class="bg-white dark:bg-gray-900 shadow dark:shadow-none px-4 py-3 sm:px-6 sm:py-5 rounded-2xl max-w-full overflow-hidden" style="opacity: 1; transform: none;">
+    <div class="md:flex flex-wrap max-w-full gap-2  items-center justify-center  ">
+      <a href={item.website_url} target="_blank" rel="noopener noreferrer">
+        <div class="flex flex-wrap max-w-full gap-2  items-center justify-start my-1.5 w-52 flex-nowrap overflow-hidden">
+          <div style="display: inline-block; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box; margin: 0px;">
+            <img style="width:64px;" src={"/uploads/avatars/#{item.avatar["key"]}"} class="rounded-full">
+          </div>
+          <div class="flex flex-wrap max-w-full gap-0 flex-col items-start justify-center  flex-nowrap overflow-hidden">
+            <p class=" text-gray-900 dark:text-gray-100 text-base truncate max-w-full leading-6  font-semibold
+                                                                                                                                                 transition-colors"><%= item.name%></p>
+            <p class="text-gray-500 text-sm leading-5">@<%= item.login%></p>
+          </div>
+        </div>
+      </a>
+      <div class="block md:hidden w-full">
+        <div class="-mx-4 sm:-mx-6">
+          <div class="w-full my-4 mx-auto border-t border-gray-100 dark:border-gray-900" style="max-width: 100%;"></div>
+        </div>
+      </div>
+      <div class="flex flex-wrap max-w-full gap-5 flex-col items-start justify-center flex-1 ">
+        <div class="flex flex-wrap max-w-full gap-3  items-center undefined w-full ">
+          <div class="flex flex-col md:grid gap-4 md:gap-5 w-full" style="grid-template-columns: 280px 1fr auto;">
+            <div class="flex flex-wrap max-w-full gap-3  items-center justify-start py-4 -my-4 flex-nowrap overflow-hidden">
+
+              <%= unless is_nil(item.link.site.icon) do %>
+              <div class="relative" style="width: 46px; height: 46px;">
+                <div class="rounded-lg flex-shrink-0 z-10 bg-gray-50 dark:bg-gray-800 overflow-hidden relative" style="width: 46px; height: 46px;">
+                  <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                    <div style="overflow: hidden; box-sizing: border-box; display: inline-block; position: relative; width: 30px; height: 30px;">
+                      <img style="width:64px;" src={"/uploads/icons/#{item.link.site.icon["key"]}"} class="rounded-full">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+              <a href="https://bit.ly/315GiJs" target="_blank" rel="noopener noreferrer" class="overflow-hidden">
+                <div class="flex flex-wrap max-w-full gap-0 flex-col items-start justify-center w-full ">
+                  <p class=" text-gray-900 dark:text-gray-100 text-base truncate max-w-full leading-6  font-semibold
+                          transition-colors"><%= item.link.title%></p>
+                  <div class="flex flex-wrap max-w-full gap-1  items-center justify-center  flex-nowrap overflow-hidden">
+                    <p class="text-gray-500 text-sm truncate max-w-full leading-5
+                      "><%= item.link.url%></p>
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <%= unless is_nil(item.link.rss_feed) do %>
+            <div class="flex flex-wrap max-w-full gap-1 flex-col items-start justify-center  flex-nowrap overflow-hidden">
+              <div class="flex flex-wrap max-w-full gap-1  items-center justify-start w-full flex-nowrap overflow-hidden">
+                <a href={item.link.rss_feed.first_entity_url} target="_blank" rel="noopener noreferrer" class="max-w-full overflow-hidden">
+                  <p class="text-gray-600 dark:text-gray-400 text-sm truncate max-w-full leading-5font-semibold">
+                    <%= item.link.rss_feed.first_entity_title%>
+                  </p>
+                </a>
+              </div>
+              <div class="hidden sm:block max-w-full">
+                <p class="text-gray-500 text-sm truncate max-w-full leading-5">
+                  <%= item.link.rss_feed.first_entity_summary%>
+                </p>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+

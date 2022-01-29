@@ -18,7 +18,7 @@ defmodule Mage.GithubUsers.GithubUser do
     field :url, :string
     field :website_url, :string
     field :user_id, :id
-    field :link_id, :id
+    belongs_to :link, Mage.Links.Link
     field :avatar, :map
 
     timestamps()

@@ -109,4 +109,16 @@ defmodule Mage.Accounts do
     |> Ecto.Changeset.put_assoc(:followers, github_users)
     |> Repo.update()
   end
+
+  def list_followers(user_id) do
+    with %User{} = user <- Repo.get(User, user_id),
+         %{followers: followers} <-
+           user
+           |> Repo.preload(followers: [link: :site, link: :rss_feed]) do
+      followers
+      |> Enum.filter(&(!is_nil(&1.link)))
+    else
+      _any -> []
+    end
+  end
 end

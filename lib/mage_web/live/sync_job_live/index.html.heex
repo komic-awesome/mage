@@ -1,8 +1,8 @@
 <h1>Listing Users</h1>
 
-<span>
-  <%= link "开始获取", to: "#", phx_click: "begin_sync_job" %>
-</span>
+<div>
+  <%= link "开始获取", to: "#", phx_click: "begin_sync_job", class: "mt-1 inline-block bg-indigo-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+</div>
 
 <%= unless is_nil(@sync_job) do %>
 <dl style="margin-top:60px;">

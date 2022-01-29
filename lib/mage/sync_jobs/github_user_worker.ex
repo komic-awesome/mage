@@ -10,8 +10,10 @@ defmodule Mage.GithubUserWorker do
   end
 
   def handle_call({:sync_github_user, api_result}, _from, state) do
-    Mage.GithubUsers.sync_github_user(api_result)
-
-    {:reply, :ok, state}
+    {
+      :reply,
+      Mage.GithubUsers.sync_github_user(api_result),
+      state
+    }
   end
 end

@@ -1,6 +1,7 @@
 defmodule Mage.SyncJobs.ProcessSyncJob do
   alias Mage.SyncJobs
   alias Mage.UserIdentities
+  alias Mage.Accounts
 
   require Logger
 
@@ -11,14 +12,17 @@ defmodule Mage.SyncJobs.ProcessSyncJob do
       job = update_sync_job(job, %{status_type: "processing"})
 
       with {:ok, access_token} <- UserIdentities.fetch_access_token(job.user_id) do
-        Mage.Github.Followers.chunk_user_followers(access_token)
-        |> Stream.map(fn entries ->
-          Enum.map(entries, fn item ->
-            create_github_user_task(item)
+        followers =
+          Mage.Github.Followers.chunk_user_followers(access_token)
+          |> Stream.map(fn entries ->
+            Enum.map(entries, fn item ->
+              create_github_user_task(item)
+            end)
           end)
-        end)
-        |> Enum.flat_map(& &1)
-        |> yeild_download_tasks()
+          |> Enum.flat_map(& &1)
+          |> yeild_download_tasks()
+
+        Accounts.update_followers(job.user_id, followers)
 
         job =
           update_sync_job(job, %{
@@ -58,27 +62,29 @@ defmodule Mage.SyncJobs.ProcessSyncJob do
   end
 
   def yeild_download_tasks(tasks) do
-    tasks_with_results = Task.yield_many(tasks, @task_queue_timeout)
+    tasks_with_results =
+      Task.yield_many(tasks, @task_queue_timeout)
+      |> IO.inspect()
 
-    Enum.each(tasks_with_results, fn {task, res} ->
+    tasks_with_results
+    |> Enum.map(fn {task, res} ->
       case res || Task.shutdown(task, :brutal_kill) do
         nil ->
           Logger.warn("Failed to get a result in #{@task_queue_timeout}ms")
+          nil
+
+        {:ok, {:ok, github_user}} ->
+          github_user
 
         _ ->
           nil
       end
     end)
-
-    :ok
+    |> Enum.filter(&(!is_nil(&1)))
   end
 
   defp update_sync_job(job, attrs) do
-    {:ok, new_job} =
-      SyncJobs.update_sync_job(job, %{
-        status_type: "success",
-        job_finished_at: DateTime.utc_now()
-      })
+    {:ok, new_job} = SyncJobs.update_sync_job(job, attrs)
 
     if job.user_id do
       broadcast("user:#{job.user_id}", "job:updated", new_job)

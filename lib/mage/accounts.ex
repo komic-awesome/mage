@@ -101,4 +101,12 @@ defmodule Mage.Accounts do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
+  def update_followers(user_id, github_users) do
+    get_user!(user_id)
+    |> Repo.preload(:followers)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:followers, github_users)
+    |> Repo.update()
+  end
 end

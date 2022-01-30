@@ -8,38 +8,68 @@ defmodule Mage.SyncJobs.ProcessSyncJob do
   import MageWeb.Endpoint, only: [broadcast: 3]
 
   def start_task(job_id) do
+    try do
+      process_sync_job(job_id)
+    rescue
+      e ->
+        Logger.error(Exception.format(:error, e, __STACKTRACE__))
+    end
+  end
+
+  defp process_sync_job(job_id) do
     with job <- SyncJobs.get_sync_job(job_id) do
       job = update_sync_job(job, %{status_type: "processing"})
 
-      with {:ok, access_token} <- UserIdentities.fetch_access_token(job.user_id) do
-        followers =
-          Mage.Github.Followers.chunk_user_followers(access_token)
-          |> Stream.map(fn entries ->
-            Enum.map(entries, fn item ->
-              create_github_user_task(item)
+      try do
+        with {:ok, access_token} <- UserIdentities.fetch_access_token(job.user_id) do
+          followers =
+            Mage.Github.Followers.chunk_user_followers(access_token)
+            |> Stream.map(fn entries ->
+              Enum.map(entries, fn item ->
+                create_github_user_task(item)
+              end)
             end)
-          end)
-          |> Enum.flat_map(& &1)
-          |> yeild_download_tasks()
+            |> Enum.flat_map(& &1)
+            |> yeild_download_tasks()
 
-        Accounts.update_followers(job.user_id, followers)
+          Accounts.update_followers(job.user_id, followers)
 
-        job =
-          update_sync_job(job, %{
-            status_type: "success",
-            job_finished_at: DateTime.utc_now()
-          })
-      else
-        {:error, error} ->
-          # TODO(yangqing)
-          Process.sleep(10000)
+          followings =
+            Mage.Github.Followings.chunk_user_followings(access_token)
+            |> Stream.map(fn entries ->
+              Enum.map(entries, fn item ->
+                create_github_user_task(item)
+              end)
+            end)
+            |> Enum.flat_map(& &1)
+            |> yeild_download_tasks()
 
+          Accounts.update_followings(job.user_id, followings)
+
+          job =
+            update_sync_job(job, %{
+              status_type: "success",
+              job_finished_at: DateTime.utc_now()
+            })
+        else
+          {:error, error} ->
+            job =
+              update_sync_job(job, %{
+                status_type: "error",
+                job_finished_at: DateTime.utc_now(),
+                last_error: :erlang.term_to_binary(error)
+              })
+        end
+      rescue
+        e ->
           job =
             update_sync_job(job, %{
               status_type: "error",
               job_finished_at: DateTime.utc_now(),
-              last_error: :erlang.term_to_binary(error)
+              last_error: :erlang.term_to_binary(e)
             })
+
+          Logger.error(Exception.format(:error, e, __STACKTRACE__))
       end
     else
       _any -> nil
@@ -62,9 +92,7 @@ defmodule Mage.SyncJobs.ProcessSyncJob do
   end
 
   def yeild_download_tasks(tasks) do
-    tasks_with_results =
-      Task.yield_many(tasks, @task_queue_timeout)
-      |> IO.inspect()
+    tasks_with_results = Task.yield_many(tasks, @task_queue_timeout)
 
     tasks_with_results
     |> Enum.map(fn {task, res} ->

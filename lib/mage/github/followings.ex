@@ -2,7 +2,7 @@ defmodule Mage.Github.Followings do
   @query """
     query ($limit: Int = 20, $after: String = null) {
       viewer {
-        followings(first: $limit, after: $after) {
+        following(first: $limit, after: $after) {
           edges {
             node {
               id
@@ -76,8 +76,8 @@ defmodule Mage.Github.Followings do
              headers: [authorization: "Bearer #{access_token}"]
            ) do
       {
-        Enum.map(get_in(body, ["data", "viewer", "followings", "edges"]), & &1["node"]),
-        case get_in(body, ["data", "viewer", "followings", "pageInfo"]) do
+        Enum.map(get_in(body, ["data", "viewer", "following", "edges"]), & &1["node"]),
+        case get_in(body, ["data", "viewer", "following", "pageInfo"]) do
           %{"hasNextPage" => false} ->
             :stop
 

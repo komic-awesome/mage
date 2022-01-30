@@ -110,6 +110,14 @@ defmodule Mage.Accounts do
     |> Repo.update()
   end
 
+  def update_followings(user_id, github_users) do
+    get_user!(user_id)
+    |> Repo.preload(:followings)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:followings, github_users)
+    |> Repo.update()
+  end
+
   def list_followers(user_id) do
     with %User{} = user <- Repo.get(User, user_id),
          %{followers: followers} <-

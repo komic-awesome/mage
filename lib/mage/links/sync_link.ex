@@ -57,7 +57,7 @@ defmodule Mage.Links.SyncLink do
 
       updated_attrs =
         case RssFeeds.sync_rss_feed(link_url, body_html) do
-          {:ok, %Site{} = rss_feed} ->
+          {:ok, %RssFeed{} = rss_feed} ->
             Map.put_new(updated_attrs, :rss_feed_id, rss_feed.id)
 
           _ ->

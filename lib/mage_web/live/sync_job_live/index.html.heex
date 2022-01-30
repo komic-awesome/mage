@@ -35,8 +35,8 @@
   </div>
 <% end %>
 
-<%= for item <- @github_users do %>
 <div class="mt-10 flex flex-wrap max-w-full gap-3 flex-col items-stretch justify-center">
+<%= for item <- @github_users do %>
   <div class="bg-white dark:bg-gray-900 shadow dark:shadow-none px-4 py-3 sm:px-6 sm:py-5 rounded-2xl max-w-full overflow-hidden" style="opacity: 1; transform: none;">
     <div class="md:flex flex-wrap max-w-full gap-2  items-center justify-center  ">
       <a href={item.website_url} target="_blank" rel="noopener noreferrer">
@@ -105,6 +105,6 @@
       </div>
     </div>
   </div>
-</div>
 <% end %>
+</div>
 

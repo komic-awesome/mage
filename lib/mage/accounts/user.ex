@@ -7,6 +7,7 @@ defmodule Mage.Accounts.User do
     has_one :user_identity, Mage.UserIdentities.UserIdentity
 
     many_to_many :followers, Mage.GithubUsers.GithubUser, join_through: "user_follower"
+    many_to_many :followings, Mage.GithubUsers.GithubUser, join_through: "user_following"
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule Mage.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :followers])
+    |> cast(attrs, [:email, :followers, :followings])
     |> validate_required([:email])
   end
 end

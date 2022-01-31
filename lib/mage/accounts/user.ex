@@ -6,8 +6,13 @@ defmodule Mage.Accounts.User do
     field :email, :string
     has_one :user_identity, Mage.UserIdentities.UserIdentity
 
-    many_to_many :followers, Mage.GithubUsers.GithubUser, join_through: "user_follower"
-    many_to_many :followings, Mage.GithubUsers.GithubUser, join_through: "user_following"
+    many_to_many :followers, Mage.GithubUsers.GithubUser,
+      join_through: "user_follower",
+      on_replace: :delete
+
+    many_to_many :followings, Mage.GithubUsers.GithubUser,
+      join_through: "user_following",
+      on_replace: :delete
 
     timestamps()
   end

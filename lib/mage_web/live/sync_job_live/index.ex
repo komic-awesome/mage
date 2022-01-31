@@ -20,8 +20,7 @@ defmodule MageWeb.SyncJobLive.Index do
         nil
     end
 
-    {:ok,
-     socket |> assign(:sync_job, get_sync_job(current_user)) |> assign_github_users(current_user)}
+    {:ok, socket}
   end
 
   @impl true
@@ -29,9 +28,26 @@ defmodule MageWeb.SyncJobLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
+    apply_action(socket, :followings, params)
+  end
+
+  defp apply_action(socket, :followings, _params) do
+    current_user = socket.assigns.current_user
+
     socket
-    |> assign(:page_title, "当前同步")
+    |> assign(:page_title, "关注的人")
+    |> assign(:sync_job, get_sync_job(current_user))
+    |> assign_github_users(:followings, current_user)
+  end
+
+  defp apply_action(socket, :followers, _params) do
+    current_user = socket.assigns.current_user
+
+    socket
+    |> assign(:page_title, "被关注的人")
+    |> assign(:sync_job, get_sync_job(current_user))
+    |> assign_github_users(:followers, current_user)
   end
 
   def handle_event("begin_sync_job", _params, socket) do
@@ -57,9 +73,36 @@ defmodule MageWeb.SyncJobLive.Index do
     nil
   end
 
-  defp assign_github_users(socket, nil), do: socket
+  defp assign_github_users(socket, _action, nil), do: socket
 
-  defp assign_github_users(socket, %{id: user_id}) do
+  defp assign_github_users(socket, :followings, %{id: user_id}) do
+    socket |> assign(:github_users, Accounts.list_followings(user_id))
+  end
+
+  defp assign_github_users(socket, :followers, %{id: user_id}) do
     socket |> assign(:github_users, Accounts.list_followers(user_id))
+  end
+
+  defp maybe_menu_link(live_action, :index) do
+    maybe_menu_link(live_action, :followings)
+  end
+
+  defp maybe_menu_link(live_action, current_action) do
+    assigns = %{
+      href: MageWeb.Router.Helpers.sync_job_index_path(MageWeb.Endpoint, current_action),
+      actived: live_action == current_action,
+      title:
+        case current_action do
+          :followings -> "关注的人"
+          :followers -> "被关注的人"
+        end
+    }
+
+    ~H"""
+    <a class="inline-block p-3 relative no-underline" data-phx-link="redirect" data-phx-link-state="push" href={@href}>
+      <%= if @actived do %>*<% end %>
+      <%= @title%>
+    </a>
+    """
   end
 end

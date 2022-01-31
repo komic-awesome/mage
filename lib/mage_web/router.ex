@@ -27,6 +27,8 @@ defmodule MageWeb.Router do
     pipe_through :browser
 
     live "/", SyncJobLive.Index, :index
+    live "/followings", SyncJobLive.Index, :followings
+    live "/followers", SyncJobLive.Index, :followers
     live "/login", UserLive.Login, :login
     live "/users", UserLive.Index, :index
     live "/users/new", UserLive.Index, :new

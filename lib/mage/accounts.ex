@@ -129,4 +129,16 @@ defmodule Mage.Accounts do
       _any -> []
     end
   end
+
+  def list_followings(user_id) do
+    with %User{} = user <- Repo.get(User, user_id),
+         %{followings: followings} <-
+           user
+           |> Repo.preload(followings: [link: :site, link: :rss_feed]) do
+      followings
+      |> Enum.filter(&(!is_nil(&1.link)))
+    else
+      _any -> []
+    end
+  end
 end

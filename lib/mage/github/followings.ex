@@ -1,6 +1,6 @@
 defmodule Mage.Github.Followings do
   @query """
-    query ($limit: Int = 20, $after: String = null) {
+    query ($limit: Int = 50, $after: String = null) {
       viewer {
         following(first: $limit, after: $after) {
           edges {
@@ -33,18 +33,29 @@ defmodule Mage.Github.Followings do
 
   @followings_limit 20
 
-  def chunk_user_followings(access_token) do
+  def chunk_user_followings(access_token, max_page \\ 40) do
     chunk_stream =
       Stream.unfold(
-        nil,
+        {nil, 0},
         fn
           :stop ->
             {[], :stop}
 
-          end_cursor ->
+          {end_cursor, current_page} ->
+            current_page = current_page + 1
+
             {entries, end_cursor} = query_user_followings(access_token, end_cursor)
 
-            {entries, end_cursor}
+            cond do
+              current_page >= max_page ->
+                {[], :stop}
+
+              end_cursor == :stop ->
+                {[], :stop}
+
+              true ->
+                {entries, {end_cursor, current_page}}
+            end
         end
       )
 

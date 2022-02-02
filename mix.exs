@@ -20,7 +20,7 @@ defmodule Mage.MixProject do
   def application do
     [
       mod: {Mage.Application, [:httpoison]},
-      extra_applications: [:logger, :runtime_tools, :elixir_feed_parser]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -55,8 +55,8 @@ defmodule Mage.MixProject do
       {:neuron, "~> 5.0.0"},
       {:httpoison, "~> 1.8"},
       {:ex_image_info, "~> 0.2.4"},
-      {:elixir_feed_parser, "~> 2.1.0"},
-      {:poolboy, "~> 1.5.1"}
+      {:poolboy, "~> 1.5.1"},
+      {:timex, "~> 3.4"}
     ]
   end
 

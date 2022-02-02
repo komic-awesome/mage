@@ -1,5 +1,9 @@
 defmodule ElixirFeedParser do
-  @moduledoc false
+  @moduledoc """
+  Copyright (c) 2015-present Frederik Dietz and contributors.
+  Licensed under the MIT License (MIT), see
+  https://github.com/fdietz/elixir-feed-parser
+  """
 
   alias ElixirFeedParser.Parsers.Atom
   alias ElixirFeedParser.Parsers.FeedburnerAtom

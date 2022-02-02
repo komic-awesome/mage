@@ -99,7 +99,7 @@ defmodule MageWeb.SyncJobLive.Index do
     }
 
     ~H"""
-    <a class="inline-block p-3 relative no-underline" data-phx-link="redirect" data-phx-link-state="push" href={@href}>
+    <a class="inline-block p-3 relative no-underline" data-phx-link="patch" data-phx-link-state="push" href={@href}>
       <%= if @actived do %>*<% end %>
       <%= @title%>
     </a>

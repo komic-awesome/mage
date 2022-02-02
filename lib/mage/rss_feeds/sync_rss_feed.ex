@@ -98,6 +98,12 @@ defmodule Mage.RssFeeds.SyncRssFeed do
     description
   end
 
+  defp retrieve_first_entity(:summary, %{entries: [%{content: content} | _tail]})
+       when is_binary(content) do
+    HtmlSanitizeEx.strip_tags(content)
+    |> String.slice(0, 400)
+  end
+
   defp retrieve_first_entity(:published_at, %{
          entries: [%{"rss2:pubDate": %DateTime{} = datetime}]
        }) do

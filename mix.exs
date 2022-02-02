@@ -56,7 +56,8 @@ defmodule Mage.MixProject do
       {:httpoison, "~> 1.8"},
       {:ex_image_info, "~> 0.2.4"},
       {:poolboy, "~> 1.5.1"},
-      {:timex, "~> 3.4"}
+      {:timex, "~> 3.4"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 

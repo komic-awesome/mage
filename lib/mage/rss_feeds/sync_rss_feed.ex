@@ -5,7 +5,7 @@ defmodule Mage.RssFeeds.SyncRssFeed do
   alias Mage.ContextHelpers
 
   def sync_rss_feed(:from_remote, feed_url) do
-    case HTTPoison.get(feed_url, [], timeout: 1500, recv_timeout: 1500) do
+    case HTTPoison.get(feed_url, [], follow_redirect: true, timeout: 5500, recv_timeout: 5500) do
       {:ok, %HTTPoison.Response{status_code: status_code, body: xml_string}} ->
         if status_code < 300 and status_code >= 200 do
           case ElixirFeedParser.parse(xml_string |> String.replace("Invalid Date", "")) do

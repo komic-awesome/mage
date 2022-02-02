@@ -83,16 +83,16 @@ defmodule MageWeb.SyncJobLive.Index do
     socket |> assign(:github_users, Accounts.list_followers(user_id))
   end
 
-  defp maybe_menu_link(live_action, :index) do
-    maybe_menu_link(live_action, :followings)
+  defp maybe_menu_link(:index, item_action) do
+    maybe_menu_link(:followings, item_action)
   end
 
-  defp maybe_menu_link(live_action, current_action) do
+  defp maybe_menu_link(live_action, item_action) do
     assigns = %{
-      href: MageWeb.Router.Helpers.sync_job_index_path(MageWeb.Endpoint, current_action),
-      actived: live_action == current_action,
+      href: MageWeb.Router.Helpers.sync_job_index_path(MageWeb.Endpoint, item_action),
+      actived: live_action == item_action,
       title:
-        case current_action do
+        case item_action do
           :followings -> "关注的人"
           :followers -> "被关注的人"
         end

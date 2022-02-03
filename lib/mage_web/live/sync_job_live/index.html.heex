@@ -1,7 +1,7 @@
 <div class="page-sync-result">
   <header>
     <div class="rounded-t-[10px] md:rounded-lg flex items-stretch justify-end px-2 py-1 md:m-1">
-      <%= link(to: Routes.pow_session_path(@socket, :delete), method: :delete, class: "bg-black bg-opacity-20 flex mr-1 px-3 py-2 text-xs font-medium text-white rounded-md  focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-50", onclick: "(function(){ if (!confirm('是否确定登出?')) {event.stopImmediatePropagation();} }).call(event)") do %>
+      <%= link(to: Routes.pow_session_path(@socket, :delete), method: :delete, class: "bg-black bg-opacity-20 flex mr-1 px-3 py-2 text-xs font-medium text-white rounded-md  focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-50", onclick: "(function(){ if (!confirm('是否确定登出?')) {event.preventDefault();} }).call(event)") do %>
         <%= @current_user.email %>
       <% end %>
     </div>

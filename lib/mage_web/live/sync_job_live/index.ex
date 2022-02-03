@@ -38,7 +38,7 @@ defmodule MageWeb.SyncJobLive.Index do
     current_user = socket.assigns.current_user
 
     socket
-    |> assign(:page_title, "关注的人")
+    |> assign(:page_title, "我关注的人")
     |> assign(:sync_job, get_sync_job(current_user))
     |> assign_github_users(:followings, current_user)
   end
@@ -47,7 +47,7 @@ defmodule MageWeb.SyncJobLive.Index do
     current_user = socket.assigns.current_user
 
     socket
-    |> assign(:page_title, "被关注的人")
+    |> assign(:page_title, "关注我的人")
     |> assign(:sync_job, get_sync_job(current_user))
     |> assign_github_users(:followers, current_user)
   end
@@ -100,8 +100,8 @@ defmodule MageWeb.SyncJobLive.Index do
         end,
       title:
         case item_action do
-          :followings -> "关注的人"
-          :followers -> "被关注的人"
+          :followings -> "我关注的人"
+          :followers -> "关注我的人"
         end
     }
 

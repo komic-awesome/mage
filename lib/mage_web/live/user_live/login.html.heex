@@ -1,1 +1,27 @@
-<%= link("Github 登录", to: Routes.pow_assent_authorization_path(@socket, :new, :github), class: "mt-1 inline-block bg-indigo-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500") %>
+<div class="login-welcome__container">
+  <div class="login-welcome">
+    <div class="login-welcome__body">
+      <div class="login-welcome__columns">
+        <h1>Mage</h1>
+        <div>
+          <p>
+            这是一个可以帮助你<span class="mark">快速发现</span>你的 Github 好友的博客的小工具。
+          </p>
+        </div>
+
+        <div class="login-welcome__cover">
+          <img src="/images/login_welcome/img1.jpg" />
+        </div>
+
+        <div class="login-welcome__action">
+          <%= link(to: Routes.pow_assent_authorization_path(@socket, :new, :github), class: "btn btn--indigo btn--large") do %>
+            <img class="icon" src="/images/icons/github.svg" />
+            登录 Github 并开始解析
+          <% end %>
+        </div>
+        <p class="text-gray-500 text-sm leading-4 text-center mt-3"> 本站参考和借鉴和灵感来自 <a href="https://www.feedsmage.com/" target="_blank" rel="noopener noreferrer" class="underline">https://www.feedsmage.com</a>。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

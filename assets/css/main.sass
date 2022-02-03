@@ -1,2 +1,95 @@
-body
-  background-color: gray
+body, html
+  background: #6CD4FF
+  background: -webkit-linear-gradient(to left, #6CD4FF, #8B80F9)
+  background: linear-gradient(to left, #6CD4FF, #8B80F9)
+  -webkit-font-smoothing: antialiased
+  font-size: 16px
+  -webkit-text-size-adjust: 100%
+  margin: 0
+  padding: 0
+
+.login-welcome__container
+  width: 100%
+  height: 100%
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background: #6CD4FF
+  background: -webkit-linear-gradient(to left, #6CD4FF, #8B80F9)
+  background: linear-gradient(to left, #6CD4FF, #8B80F9)
+  display: flex
+  align-items: center
+  justify-content: center
+  padding-left: 0.5rem
+  padding-right: 0.5rem
+
+.login-welcome
+  background: #fff
+  width: 620px
+  max-width: 100%
+  overflow: hidden
+  border-radius: 1rem
+  font-weight: 500
+  .login-welcome__body
+    width: 100%
+    padding: 1.25rem
+  .login-welcome__columns
+    max-width: 100%
+    display: flex
+    flex-direction: column
+    flex-wrap: wrap
+    gap: 0.25rem
+    margin-top: 0.75rem
+    margin-bottom: 0.75rem
+    align-items: center
+    justify-content: center
+  h1
+    font-weight: 700
+    font-size: 1.875rem
+  p
+    line-height: 1.6
+  .mark
+    color: #6963e3
+  .login-welcome__cover
+    width: 400px
+    max-width: 100%
+    margin-top: 1.25rem
+    border-radius: 1rem
+    overflow: hidden
+    box-shadow: 0 6px 20px -2px rgba(0,0,0,0.11)
+    img
+      width: 400px
+      height: 299px
+      overflow: hidden
+      object-fit: contain
+      max-width: 100%
+  .login-welcome__action
+    margin-top: 1.25em
+
+.btn
+  display: inline-block
+
+.btn--indigo
+  background-color: rgb(79 70 229)
+  color: white
+  &:hover, &:focus
+    background-color: rgb(67 56 202)
+
+.btn--large
+  padding-left: 2rem
+  padding-right: 2rem
+  padding-top: 0.75rem
+  padding-bottom: 0.75rem
+  font-size: 1rem
+  line-height: 1.5rem
+  font-weight: 500
+  border-radius: 0.375rem
+  .icon
+    display: inline-block
+    width: 1.25rem
+    height: 1.25rem
+    object-fit: cover
+    margin-right: 2px
+    margin-top: -2px

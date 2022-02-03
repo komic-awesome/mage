@@ -22,9 +22,6 @@ defmodule MageWeb.Pow.ControllerCallbacks do
   end
 
   def before_respond(Pow.Phoenix.SessionController, :delete, {:ok, conn}, config) do
-    live_socket_id = Conn.get_session(conn, @live_socket_id_key)
-    MageWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
-
     ControllerCallbacks.before_respond(
       Pow.Phoenix.SessionController,
       :delete,

@@ -52,7 +52,8 @@ config :mage, :pow,
   repo: Mage.Repo,
   controller_callbacks: MageWeb.Pow.ControllerCallbacks,
   cache_store_backend: Pow.Store.Backend.EtsCache,
-  credentials_cache_store: {Pow.Store.CredentialsCache, ttl: :timer.hours(168)}
+  credentials_cache_store: {Pow.Store.CredentialsCache, ttl: :timer.hours(168)},
+  routes_backend: MageWeb.Pow.Routes
 
 config :mage, :pow_assent,
   providers: [

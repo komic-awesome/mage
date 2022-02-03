@@ -41,6 +41,7 @@ defmodule MageWeb.SyncJobLive.Index do
     |> assign(:page_title, "我关注的人")
     |> assign(:sync_job, get_sync_job(current_user))
     |> assign_github_users(:followings, current_user)
+    |> auto_begin_sync_job()
   end
 
   defp apply_action(socket, :followers, _params) do
@@ -50,6 +51,27 @@ defmodule MageWeb.SyncJobLive.Index do
     |> assign(:page_title, "关注我的人")
     |> assign(:sync_job, get_sync_job(current_user))
     |> assign_github_users(:followers, current_user)
+    |> auto_begin_sync_job()
+  end
+
+  @seconds_per_day 3600 * 24
+  defp auto_begin_sync_job(socket) do
+    case socket.assigns.current_user do
+      %{id: user_id} ->
+        now = DateTime.utc_now()
+
+        if is_nil(socket.assigns.sync_job) or
+             is_nil(socket.assigns.sync_job.job_started_at) or
+             DateTime.diff(now, socket.assigns.sync_job.job_started_at) > @seconds_per_day do
+          job = SyncJobs.begin_user_sync_job(user_id)
+          socket |> assign(:sync_job, job)
+        else
+          socket
+        end
+
+      _ ->
+        socket
+    end
   end
 
   def handle_event("begin_sync_job", _params, socket) do
@@ -64,7 +86,20 @@ defmodule MageWeb.SyncJobLive.Index do
   end
 
   def handle_info(%{event: "job:updated", payload: job}, socket) do
-    {:noreply, socket |> assign(:sync_job, job)}
+    socket =
+      case job do
+        %{status_type: "success"} ->
+          socket |> assign_github_users(socket.assigns.live_action, socket.assigns.current_user)
+
+        _ ->
+          socket
+      end
+
+    {
+      :noreply,
+      socket
+      |> assign(:sync_job, job)
+    }
   end
 
   def get_sync_job(%{id: user_id}) do
@@ -76,6 +111,10 @@ defmodule MageWeb.SyncJobLive.Index do
   end
 
   defp assign_github_users(socket, _action, nil), do: socket
+
+  defp assign_github_users(socket, :index, %{id: user_id}) do
+    assign_github_users(socket, :followings, %{id: user_id})
+  end
 
   defp assign_github_users(socket, :followings, %{id: user_id}) do
     socket |> assign(:github_users, Accounts.list_followings(user_id))

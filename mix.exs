@@ -57,7 +57,8 @@ defmodule Mage.MixProject do
       {:ex_image_info, "~> 0.2.4"},
       {:poolboy, "~> 1.5.1"},
       {:timex, "~> 3.4"},
-      {:html_sanitize_ex, "~> 1.4"}
+      {:html_sanitize_ex, "~> 1.4"},
+      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -73,7 +74,11 @@ defmodule Mage.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map --style=compressed",
+        "phx.digest"
+      ]
     ]
   end
 end

@@ -67,6 +67,13 @@ config :mime, :types, %{
   "image/x-icon" => ["ico"]
 }
 
+config :dart_sass,
+  version: "1.49.0",
+  default: [
+    args: ~w(css/main.sass ../priv/static/assets/main.css),
+    cd: Path.expand("../assets", __DIR__)
+  ]
+
 config :tailwind,
   version: "3.0.7",
   default: [

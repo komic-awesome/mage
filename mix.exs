@@ -33,7 +33,7 @@ defmodule Mage.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.1"},
       {:phoenix, "~> 1.6.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
@@ -75,6 +75,7 @@ defmodule Mage.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
+        "tailwind default --minify",
         "esbuild default --minify",
         "sass default --no-source-map --style=compressed",
         "phx.digest"

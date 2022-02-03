@@ -26,8 +26,8 @@ body, html
   padding-right: 0.5rem
 
 .login-welcome
-  background: #fff
   width: 620px
+  background: #fff
   max-width: 100%
   overflow: hidden
   border-radius: 1rem
@@ -93,3 +93,83 @@ body, html
     object-fit: cover
     margin-right: 2px
     margin-top: -2px
+
+.page-sync-result
+  max-width: 1200px
+  margin: 0 auto
+  .page-body
+    padding-left: 0.5rem
+    padding-right: 0.5rem
+    padding-bottom: 10rem
+
+.userlist--empty
+  background-color: white
+  width: 100%
+  margin: 0.25rem
+  margin-top: 1.25rem
+  padding: 1rem
+  border-radius: 1rem
+  min-height: 5rem
+
+.user-card
+  width: 300px
+  background: #fff
+  max-width: 100%
+  overflow: hidden
+  border-radius: 1rem
+  padding: 1.25rem
+  .user-info__avatar
+    text-align: center
+    img
+      display: inline-block
+  .user-info__content
+    margin-top: 1.25rem
+  .link
+    margin-top: 0.5rem
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    gap: 0.5rem
+  .link__icon
+    overflow: hidden
+    width: 46px
+    height: 46px
+    background: hsla(210,2%,98%)
+    border-radius: 0.25rem
+    border: 1px solid #ddd
+    display: flex
+    justify-content: center
+    align-items: center
+    img
+      width: 32px
+      height: 32px
+  .link__content
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    max-width: 80%
+  .user-card__actions
+    font-size: 14px
+    margin-top: 1rem
+    font-weight: 600
+    a
+      display: flex
+      justify-content: flex-start
+      align-items: center
+    img
+      margin-right: 0.5rem
+      opacity: 0.8
+
+@media (max-width: 600px)
+  .user-list--grids
+    .user-card
+      flex: 100%
+
+.user-list--grids
+  display: flex
+  flex-wrap: wrap
+  justify-content: flex-start
+  gap: 1rem
+  .user-card
+    width: 280px
+    margin-top: 1.5rem

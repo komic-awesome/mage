@@ -5,6 +5,8 @@ defmodule MageWeb.SyncJobLive.Index do
   alias Mage.SyncJobs
   alias Mage.Accounts
 
+  import MageWeb.SyncJobLive.Components
+
   import MageWeb.Endpoint, only: [unsubscribe: 1, subscribe: 1]
 
   @impl true
@@ -90,7 +92,12 @@ defmodule MageWeb.SyncJobLive.Index do
   defp maybe_menu_link(live_action, item_action) do
     assigns = %{
       href: MageWeb.Router.Helpers.sync_job_index_path(MageWeb.Endpoint, item_action),
-      actived: live_action == item_action,
+      actived_class:
+        if live_action == item_action do
+          "text-blue-700 bg-white shadow "
+        else
+          "text-blue-100 "
+        end,
       title:
         case item_action do
           :followings -> "关注的人"
@@ -99,10 +106,15 @@ defmodule MageWeb.SyncJobLive.Index do
     }
 
     ~H"""
-    <a class="inline-block p-3 relative no-underline" data-phx-link="patch" data-phx-link-state="push" href={@href}>
-      <%= if @actived do %>*<% end %>
-      <%= @title%>
-    </a>
+    <a
+      class={"text-center inline-block w-full py-2.5 text-sm leading-5 font-medium rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60 #{@actived_class}"}
+      id="headlessui-tabs-tab-1"
+      role="tab"
+      type="button"
+      data-phx-link="patch"
+      data-phx-link-state="push"
+      href={@href}
+    ><%= @title%></a>
     """
   end
 end

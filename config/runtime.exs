@@ -43,6 +43,15 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :mage, :pow_assent,
+    providers: [
+      github: [
+        client_id: System.get_env("GITHUB_CLIENT_ID"),
+        client_secret: System.get_env("GITHUB_CLIENT_SECRET"),
+        strategy: Assent.Strategy.Github
+      ]
+    ]
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

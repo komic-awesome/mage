@@ -10,7 +10,13 @@ defmodule MageWeb.Endpoint do
     signing_salt: "y0BLtNA2"
   ]
 
-  socket "/live", MageWeb.LiveSocket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", MageWeb.LiveSocket,
+    websocket: [
+      connect_info: [session: @session_options],
+      check_origin: [
+        "https://mage.archya.com"
+      ]
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
